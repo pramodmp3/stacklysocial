@@ -1,0 +1,935 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>STREAMIT | Admin Dashboard</title>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+      :root {
+        --primary: #e50914;
+        --primary-hover: #ff0f1a;
+        --bg-dark: #0f0f0f;
+        --sidebar-bg: rgba(20, 20, 20, 0.95);
+        --card-glass: rgba(30, 30, 30, 0.6);
+        --border-glass: rgba(255, 255, 255, 0.1);
+        --text-main: #ffffff;
+        --text-muted: #a3a3a3;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --sidebar-width: 260px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      }
+
+      body {
+        background-color: var(--bg-dark);
+        color: var(--text-main);
+        overflow-x: hidden;
+        background-image: radial-gradient(
+          circle at 50% -20%,
+          #2a0507 0%,
+          #0f0f0f 100%
+        );
+        min-height: 100vh;
+      }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg-dark);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #333;
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--primary);
+      }
+
+      /* --- Layout --- */
+      .wrapper {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* --- Sidebar --- */
+      aside {
+        width: var(--sidebar-width);
+        background: var(--sidebar-bg);
+        backdrop-filter: blur(15px);
+        border-right: 1px solid var(--border-glass);
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        height: 100vh;
+        z-index: 1000;
+        transition: var(--transition);
+      }
+
+      .logo-container {
+        padding: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .logo-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .logo-box {
+        background: var(--primary);
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 1.2rem;
+      }
+
+      .logo-text {
+        font-size: 1.5rem;
+        font-weight: 800;
+        letter-spacing: 1px;
+        color: var(--text-main);
+      }
+
+      nav {
+        flex: 1;
+        padding: 1rem;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 12px 15px;
+        color: var(--text-muted);
+        text-decoration: none;
+        border-radius: 8px;
+        margin-bottom: 5px;
+        transition: var(--transition);
+      }
+
+      .nav-item:hover,
+      .nav-item.active {
+        background: rgba(229, 9, 20, 0.1);
+        color: var(--primary);
+      }
+
+      .nav-item i {
+        width: 20px;
+      }
+
+      /* --- Main Content --- */
+      main {
+        flex: 1;
+        margin-left: var(--sidebar-width);
+        padding: 2rem;
+        transition: var(--transition);
+        width: calc(100% - var(--sidebar-width));
+      }
+
+      /* --- Navbar --- */
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        gap: 1rem;
+      }
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .menu-toggle {
+        display: none;
+        background: var(--card-glass);
+        border: 1px solid var(--border-glass);
+        color: white;
+        padding: 8px;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      .page-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .home-btn {
+        background: var(--card-glass);
+        border: 1px solid var(--border-glass);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: var(--transition);
+      }
+
+      .home-btn:hover {
+        background: rgba(229, 9, 20, 0.15);
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+
+      .icon-btn {
+        background: var(--card-glass);
+        border: 1px solid var(--border-glass);
+        color: white;
+        padding: 10px;
+        border-radius: 8px;
+        cursor: pointer;
+        position: relative;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .icon-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: var(--primary);
+        font-size: 10px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--bg-dark);
+      }
+
+      .profile-section {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding-left: 12px;
+        border-left: 1px solid var(--border-glass);
+      }
+
+      .avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        border: 2px solid var(--primary);
+        object-fit: cover;
+      }
+
+      .logout-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+      }
+
+      .logout-btn:hover {
+        color: var(--primary);
+      }
+
+      /* --- Stats Grid --- */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .glass-card {
+        background: var(--card-glass);
+        backdrop-filter: blur(12px);
+        border: 1px solid var(--border-glass);
+        border-radius: 16px;
+        padding: 1.5rem;
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .glass-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(229, 9, 20, 0.4);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      }
+
+      .stat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: var(--text-muted);
+        margin-bottom: 1rem;
+      }
+
+      .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+      }
+
+      .stat-trend {
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .trend-up {
+        color: #22c55e;
+      }
+      .trend-down {
+        color: #ef4444;
+      }
+
+      /* --- Charts Grid --- */
+      .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .chart-container {
+        height: 300px;
+        width: 100%;
+        position: relative;
+      }
+
+      .card-header {
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: var(--text-main);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      /* --- Tables --- */
+      .table-responsive {
+        overflow-x: auto;
+        width: 100%;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+        min-width: 600px;
+      }
+
+      th {
+        padding: 1rem;
+        color: var(--text-muted);
+        font-weight: 500;
+        border-bottom: 1px solid var(--border-glass);
+        font-size: 0.9rem;
+      }
+
+      td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-glass);
+        font-size: 0.95rem;
+      }
+
+      tr:hover td {
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .status-pill {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        text-transform: capitalize;
+        display: inline-block;
+      }
+
+      .status-open {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+      }
+      .status-pending {
+        background: rgba(234, 179, 8, 0.2);
+        color: #eab308;
+      }
+      .status-resolved {
+        background: rgba(34, 197, 94, 0.2);
+        color: #22c55e;
+      }
+
+      /* --- Subscriptions --- */
+      .subs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+      }
+
+      .plan-price {
+        font-size: 1.5rem;
+        color: var(--primary);
+        margin: 10px 0;
+        font-weight: 700;
+      }
+
+      .feature-list {
+        list-style: none;
+        margin: 1.5rem 0;
+        font-size: 0.9rem;
+        color: var(--text-muted);
+      }
+
+      .feature-list li {
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .progress-container {
+        height: 6px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        margin-top: 10px;
+      }
+
+      .progress-bar {
+        height: 100%;
+        background: var(--primary);
+        transition: width 1.5s ease-in-out;
+      }
+
+      /* --- Mobile Overlay --- */
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(4px);
+        z-index: 999;
+      }
+
+      /* --- Responsive Queries --- */
+      @media (max-width: 1100px) {
+        :root {
+          --sidebar-width: 80px;
+        }
+        .logo-text,
+        .nav-item span {
+          display: none;
+        }
+        .logo-container {
+          justify-content: center;
+          padding: 1.5rem 0;
+        }
+        .nav-item {
+          justify-content: center;
+          padding: 12px;
+        }
+        main {
+          margin-left: 80px;
+          width: calc(100% - 80px);
+        }
+      }
+
+      @media (max-width: 768px) {
+        :root {
+          --sidebar-width: 260px;
+        }
+        aside {
+          transform: translateX(-100%);
+        }
+        aside.open {
+          transform: translateX(0);
+        }
+        main {
+          margin-left: 0;
+          width: 100%;
+          padding: 1.5rem 1rem;
+        }
+        .menu-toggle {
+          display: block;
+        }
+        .sidebar-overlay.active {
+          display: block;
+        }
+
+        .header-actions .profile-section {
+          display: none;
+        } /* Simplified mobile header */
+        .page-title {
+          font-size: 1.2rem;
+        }
+
+        .charts-grid {
+          grid-template-columns: 1fr;
+        }
+        .stats-grid {
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+        .home-btn span {
+          display: none;
+        } /* Show icon only on mobile for home btn */
+        .home-btn {
+          padding: 10px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+        .page-title {
+          display: none;
+        }
+        .header-left {
+          width: 100%;
+          justify-content: space-between;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar-overlay" id="overlay"></div>
+
+    <div class="wrapper">
+      <!-- Sidebar -->
+      <aside id="sidebar">
+        <div class="logo-container">
+          <div class="logo-wrapper">
+            <div class="logo-box">S</div>
+            <span class="logo-text">STACKLY</span>
+          </div>
+        </div>
+        <nav>
+          <a href="#" class="nav-item active"
+            ><i data-lucide="layout-dashboard"></i> <span>Dashboard</span></a
+          >
+          <a href="./404.html" class="nav-item"
+            ><i data-lucide="bar-chart-3"></i> <span>Analytics</span></a
+          >
+          <a href="./404.html" class="nav-item"
+            ><i data-lucide="message-square"></i> <span>User Queries</span></a
+          >
+          <a href="./404.html" class="nav-item"
+            ><i data-lucide="credit-card"></i> <span>Subscriptions</span></a
+          >
+          <a href="./404.html" class="nav-item"
+            ><i data-lucide="file-text"></i> <span>Reports</span></a
+          >
+          <a href="./404.html" class="nav-item"
+            ><i data-lucide="settings"></i> <span>Settings</span></a
+          >
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main>
+        <!-- Top Navbar -->
+        <header>
+          <div class="header-left">
+            <button class="menu-toggle" id="menuBtn">
+              <i data-lucide="menu"></i>
+            </button>
+            <div class="page-title">Admin Dashboard</div>
+          </div>
+          <div class="header-actions">
+            <!-- Added Home Button -->
+            <a href="./index.html" class="home-btn">
+              <i data-lucide="home" size="18"></i>
+              <span>Back to Home</span>
+            </a>
+            <button class="icon-btn">
+              <i data-lucide="search"></i>
+            </button>
+            <button class="icon-btn">
+              <i data-lucide="bell"></i>
+              <span class="badge">4</span>
+            </button>
+            <div class="profile-section">
+              <img src="./assets/ch1.webp" alt="Avatar" class="avatar" />
+              <button class="logout-btn"><i data-lucide="log-out"></i></button>
+            </div>
+          </div>
+        </header>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+          <div class="glass-card">
+            <div class="stat-header">
+              <span>Total Users</span>
+              <i data-lucide="users" style="color: var(--primary)"></i>
+            </div>
+            <div class="stat-value counter" data-target="128430">0</div>
+            <div class="stat-trend trend-up">
+              <i data-lucide="trending-up"></i> 12%
+            </div>
+          </div>
+          <div class="glass-card">
+            <div class="stat-header">
+              <span>Active Subs</span>
+              <i data-lucide="zap" style="color: #eab308"></i>
+            </div>
+            <div class="stat-value counter" data-target="84215">0</div>
+            <div class="stat-trend trend-up">
+              <i data-lucide="trending-up"></i> 8%
+            </div>
+          </div>
+          <div class="glass-card">
+            <div class="stat-header">
+              <span>Revenue</span>
+              <i data-lucide="dollar-sign" style="color: #22c55e"></i>
+            </div>
+            <div class="stat-value">
+              $<span class="counter" data-target="245000">0</span>
+            </div>
+            <div class="stat-trend trend-up">
+              <i data-lucide="trending-up"></i> 15%
+            </div>
+          </div>
+          <div class="glass-card">
+            <div class="stat-header">
+              <span>Queries</span>
+              <i data-lucide="help-circle" style="color: #ef4444"></i>
+            </div>
+            <div class="stat-value counter" data-target="156">0</div>
+            <div class="stat-trend trend-down">
+              <i data-lucide="trending-down"></i> 3%
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="charts-grid">
+          <div class="glass-card">
+            <div class="card-header">Monthly Subscriptions</div>
+            <div class="chart-container">
+              <canvas id="subsChart"></canvas>
+            </div>
+          </div>
+          <div class="glass-card">
+            <div class="card-header">Platform Revenue Analytics</div>
+            <div class="chart-container">
+              <canvas id="revenueChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Queries Section -->
+        <div class="glass-card">
+          <div class="card-header">
+            Recent User Queries
+            <button
+              class="icon-btn"
+              style="padding: 4px 8px; font-size: 0.8rem"
+            >
+              View All
+            </button>
+          </div>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>User Name</th>
+                  <th>Subject</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody id="queryTableBody">
+                <!-- Rows injected by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Subscription Details -->
+        <div class="subs-grid">
+          <!-- Basic -->
+          <div class="glass-card">
+            <div class="card-header">Basic Plan</div>
+            <div class="plan-price">$9.99 /mo</div>
+            <ul class="feature-list">
+              <li>
+                <i data-lucide="check-circle" size="14"></i> SD Resolution
+              </li>
+              <li>
+                <i data-lucide="check-circle" size="14"></i> 1 Screen access
+              </li>
+            </ul>
+            <div style="font-size: 0.8rem; color: var(--text-muted)">
+              Usage Intensity
+            </div>
+            <div class="progress-container">
+              <div class="progress-bar" data-width="45"></div>
+            </div>
+          </div>
+          <!-- Standard -->
+          <div class="glass-card" style="border-color: rgba(229, 9, 20, 0.3)">
+            <div class="card-header">Standard Plan</div>
+            <div class="plan-price">$15.99 /mo</div>
+            <ul class="feature-list">
+              <li>
+                <i data-lucide="check-circle" size="14"></i> Full HD Resolution
+              </li>
+              <li>
+                <i data-lucide="check-circle" size="14"></i> 2 Screens access
+              </li>
+            </ul>
+            <div style="font-size: 0.8rem; color: var(--text-muted)">
+              Usage Intensity
+            </div>
+            <div class="progress-container">
+              <div class="progress-bar" data-width="78"></div>
+            </div>
+          </div>
+          <!-- Premium -->
+          <div class="glass-card">
+            <div class="card-header">Premium Plan</div>
+            <div class="plan-price">$19.99 /mo</div>
+            <ul class="feature-list">
+              <li>
+                <i data-lucide="check-circle" size="14"></i> 4K + HDR Quality
+              </li>
+              <li>
+                <i data-lucide="check-circle" size="14"></i> 4 Screens access
+              </li>
+            </ul>
+            <div style="font-size: 0.8rem; color: var(--text-muted)">
+              Usage Intensity
+            </div>
+            <div class="progress-container">
+              <div class="progress-bar" data-width="62"></div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      // Initialize Lucide Icons
+      lucide.createIcons();
+
+      // --- Selectors ---
+      const menuBtn = document.getElementById("menuBtn");
+      const sidebar = document.getElementById("sidebar");
+      const overlay = document.getElementById("overlay");
+
+      // --- Mobile Menu Logic ---
+      function toggleSidebar() {
+        sidebar.classList.toggle("open");
+        overlay.classList.toggle("active");
+      }
+
+      menuBtn.addEventListener("click", toggleSidebar);
+      overlay.addEventListener("click", toggleSidebar);
+
+      // --- Data Definitions ---
+      const queries = [
+        {
+          name: "John Doe",
+          subject: "Payment Failed",
+          status: "open",
+          date: "Oct 24",
+        },
+        {
+          name: "Sarah Smith",
+          subject: "Account Recovery",
+          status: "pending",
+          date: "Oct 23",
+        },
+        {
+          name: "Mike Johnson",
+          subject: "Streaming Lag",
+          status: "resolved",
+          date: "Oct 22",
+        },
+        {
+          name: "Emily Brown",
+          subject: "Plan Upgrade",
+          status: "open",
+          date: "Oct 22",
+        },
+        {
+          name: "Alex Wong",
+          subject: "Refund Request",
+          status: "resolved",
+          date: "Oct 21",
+        },
+      ];
+
+      // --- Initalize Components ---
+      document.addEventListener("DOMContentLoaded", () => {
+        initCounters();
+        renderQueries();
+        initCharts();
+        initProgressBars();
+      });
+
+      // --- Animated Number Counters ---
+      function initCounters() {
+        const counters = document.querySelectorAll(".counter");
+        counters.forEach((counter) => {
+          const target = parseInt(counter.getAttribute("data-target"));
+          const duration = 2000;
+          const increment = target / (duration / 16);
+
+          let current = 0;
+          const update = () => {
+            current += increment;
+            if (current < target) {
+              counter.innerText = Math.ceil(current).toLocaleString();
+              requestAnimationFrame(update);
+            } else {
+              counter.innerText = target.toLocaleString();
+            }
+          };
+          update();
+        });
+      }
+
+      // --- Animated Progress Bars ---
+      function initProgressBars() {
+        setTimeout(() => {
+          const bars = document.querySelectorAll(".progress-bar");
+          bars.forEach((bar) => {
+            const width = bar.getAttribute("data-width");
+            bar.style.width = width + "%";
+          });
+        }, 500);
+      }
+
+      // --- Render User Queries Table ---
+      function renderQueries() {
+        const tableBody = document.getElementById("queryTableBody");
+        tableBody.innerHTML = queries
+          .map(
+            (q) => `
+                <tr>
+                    <td><div style="font-weight: 600">${q.name}</div></td>
+                    <td>${q.subject}</td>
+                    <td><span class="status-pill status-${q.status}">${q.status}</span></td>
+                    <td>${q.date}</td>
+                </tr>
+            `,
+          )
+          .join("");
+      }
+
+      // --- Charts Implementation ---
+      function initCharts() {
+        const ctx1 = document.getElementById("subsChart").getContext("2d");
+        const ctx2 = document.getElementById("revenueChart").getContext("2d");
+
+        Chart.defaults.color = "#a3a3a3";
+        Chart.defaults.font.family = "'Segoe UI', 'Roboto'";
+
+        new Chart(ctx1, {
+          type: "bar",
+          data: {
+            labels: ["Jun", "Jul", "Aug", "Sep", "Oct", "Nov"],
+            datasets: [
+              {
+                label: "New Subscriptions",
+                data: [12000, 19000, 15000, 25000, 22000, 30000],
+                backgroundColor: "#e50914",
+                borderRadius: 6,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              y: {
+                grid: { color: "rgba(255,255,255,0.05)" },
+                border: { display: false },
+              },
+              x: { grid: { display: false }, border: { display: false } },
+            },
+          },
+        });
+
+        const gradient = ctx2.createLinearGradient(0, 0, 0, 300);
+        gradient.addColorStop(0, "rgba(229, 9, 20, 0.4)");
+        gradient.addColorStop(1, "rgba(229, 9, 20, 0)");
+
+        new Chart(ctx2, {
+          type: "line",
+          data: {
+            labels: ["Wk 1", "Wk 2", "Wk 3", "Wk 4"],
+            datasets: [
+              {
+                label: "Revenue ($)",
+                data: [45000, 52000, 48000, 65000],
+                borderColor: "#e50914",
+                borderWidth: 3,
+                tension: 0.4,
+                fill: true,
+                backgroundColor: gradient,
+                pointBackgroundColor: "#e50914",
+                pointRadius: 4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              y: {
+                grid: { color: "rgba(255,255,255,0.05)" },
+                border: { display: false },
+              },
+              x: { grid: { display: false }, border: { display: false } },
+            },
+          },
+        });
+      }
+    </script>
+  </body>
+</html>

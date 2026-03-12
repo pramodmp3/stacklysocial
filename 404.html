@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 - Page Not Found | Streamit</title>
+    <style>
+      /* Base Reset */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      }
+
+      body,
+      html {
+        height: 100%;
+        background-color: #000;
+        color: #fff;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      /* Full Screen Diagonal Grid Background */
+      .bg-container {
+        position: fixed;
+        top: -20%;
+        left: -10%;
+        width: 120%;
+        height: 140%;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+        transform: rotate(-10deg);
+        z-index: 1;
+        filter: brightness(0.25) blur(4px);
+      }
+
+      .poster {
+        width: 100%;
+        height: 350px;
+        background-size: cover;
+        background-position: center;
+        border-radius: 8px;
+        background-color: #1a1a1a;
+      }
+
+      /* Dark Overlay for Readability */
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+          circle,
+          rgba(0, 0, 0, 0.4) 0%,
+          rgba(0, 0, 0, 0.9) 100%
+        );
+        z-index: 2;
+      }
+
+      /* Main Wrapper */
+      .main-wrapper {
+        position: relative;
+        z-index: 10;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        padding: 20px;
+      }
+
+      /* Glassmorphism Error Card */
+      .error-card {
+        background: rgba(15, 15, 15, 0.75);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        width: 100%;
+        max-width: 500px;
+        padding: 60px 40px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        text-align: center;
+        box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+      }
+
+      /* Branding */
+      .logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        color: #e50914;
+        font-weight: 700;
+        font-size: 24px;
+        letter-spacing: 2px;
+      }
+
+      .logo .s-char {
+        font-size: 42px;
+        margin-right: 5px;
+        font-family: "Georgia", serif;
+      }
+
+      /* Error Code Styling */
+      .error-code {
+        font-size: 120px;
+        font-weight: 900;
+        color: #e50914;
+        line-height: 1;
+        margin-bottom: 20px;
+        text-shadow: 0 15px 30px rgba(229, 9, 20, 0.4);
+        animation: float 4s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+      }
+
+      .error-title {
+        font-size: 26px;
+        margin-bottom: 15px;
+        color: #fff;
+        font-weight: 600;
+      }
+
+      .error-message {
+        color: #aaa;
+        font-size: 16px;
+        line-height: 1.6;
+        margin-bottom: 40px;
+      }
+
+      /* Buttons */
+      .home-btn {
+        display: block;
+        width: 100%;
+        padding: 16px;
+        background: linear-gradient(135deg, #e50914 0%, #b20710 100%);
+        color: #fff;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 15px rgba(229, 9, 20, 0.3);
+      }
+
+      .home-btn:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.1);
+        box-shadow: 0 8px 25px rgba(229, 9, 20, 0.4);
+      }
+
+      .login-link {
+        display: inline-block;
+        color: #888;
+        text-decoration: none;
+        font-size: 15px;
+        transition: color 0.3s;
+      }
+
+      .login-link:hover {
+        color: #e50914;
+        text-decoration: underline;
+      }
+
+      /* Mobile Adjustments */
+      @media (max-width: 480px) {
+        .error-card {
+          padding: 40px 20px;
+        }
+        .error-code {
+          font-size: 80px;
+        }
+        .error-title {
+          font-size: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Full Screen Background Texture -->
+    <div class="bg-container" id="bgGrid"></div>
+    <div class="overlay"></div>
+
+    <div class="main-wrapper">
+      <div class="error-card">
+        <!-- Branding -->
+        <div class="logo"><span class="s-char">S</span>TACKLY</div>
+
+        <div class="error-code">404</div>
+
+        <h1 class="error-title">Oops! Page Not Found</h1>
+
+        <p class="error-message">
+          The page you're looking for doesn't exist. It may have been moved,
+          deleted, or the URL might be incorrect.
+        </p>
+
+        <a href="./index.html" class="home-btn">Go Back Home</a>
+
+        <!-- <a href="#" class="login-link">Back to Login</a> -->
+      </div>
+    </div>
+
+    <script>
+      // Generate Background Grid Posters
+      const grid = document.getElementById("bgGrid");
+      const posterCount = 24;
+
+      const themes = [
+        "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400&q=80",
+        "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?auto=format&fit=crop&w=400&q=80",
+        "https://images.unsplash.com/photo-1594908900066-3f47337549d8?auto=format&fit=crop&w=400&q=80",
+        "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=400&q=80",
+        "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=400&q=80",
+      ];
+
+      for (let i = 0; i < posterCount; i++) {
+        const div = document.createElement("div");
+        div.className = "poster";
+        div.style.backgroundImage = `url("${themes[i % themes.length]}")`;
+        grid.appendChild(div);
+      }
+    </script>
+  </body>
+</html>

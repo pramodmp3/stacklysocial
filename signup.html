@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Streamit - Sign Up</title>
+    <style>
+      /* Base Reset */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      }
+
+      body,
+      html {
+        height: 100%;
+        overflow-x: hidden;
+        background-color: #000;
+      }
+
+      /* Diagonal Background Grid - Matching Login Style */
+      .bg-container {
+        position: fixed;
+        top: -20%;
+        left: -10%;
+        width: 120%;
+        height: 140%;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+        transform: rotate(-10deg);
+        z-index: 1;
+        filter: brightness(0.35) blur(3px);
+      }
+
+      .poster {
+        width: 100%;
+        height: 350px;
+        background-size: cover;
+        background-position: center;
+        border-radius: 8px;
+        background-color: #1a1a1a;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      }
+
+      /* Overlay to darken and add depth */
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+          circle,
+          rgba(0, 0, 0, 0.2) 0%,
+          rgba(0, 0, 0, 0.85) 100%
+        );
+        z-index: 2;
+      }
+
+      /* Main Wrapper */
+      .main-wrapper {
+        position: relative;
+        z-index: 10;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        width: 100%;
+        padding: 40px 20px;
+      }
+
+      /* Glassmorphism Signup Card */
+      .signup-card {
+        background: rgba(15, 15, 15, 0.8);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        width: 100%;
+        max-width: 500px;
+        padding: 40px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        text-align: left;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
+      }
+
+      /* Logo Styling */
+      .logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 25px;
+        color: #e50914; /* STREAMIT text is also red now per request */
+        font-weight: 700;
+        font-size: 24px;
+        letter-spacing: 2px;
+      }
+
+      .logo .s-char {
+        font-size: 42px;
+        margin-right: 5px;
+        font-family: "Georgia", serif;
+      }
+
+      /* Form Grid for two-column on desktop if needed, but keeping single column for OTT mobile-first feel */
+      .form-group {
+        margin-bottom: 18px;
+        position: relative;
+      }
+
+      label {
+        display: block;
+        color: #bbb;
+        font-size: 13px;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      label span {
+        color: #e50914;
+      }
+
+      input[type="text"],
+      input[type="email"],
+      input[type="password"] {
+        width: 100%;
+        padding: 12px 16px;
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid #333;
+        color: #fff;
+        border-radius: 6px;
+        outline: none;
+        transition: all 0.3s ease;
+        font-size: 15px;
+      }
+
+      input:focus {
+        border-color: #e50914;
+        background: rgba(0, 0, 0, 0.7);
+        box-shadow: 0 0 10px rgba(229, 9, 20, 0.2);
+      }
+
+      /* Password Toggle Icon */
+      .toggle-password {
+        position: absolute;
+        right: 15px;
+        top: 36px;
+        cursor: pointer;
+        color: #777;
+        display: flex;
+        align-items: center;
+        transition: color 0.3s;
+      }
+
+      .toggle-password:hover {
+        color: #e50914;
+      }
+
+      /* Terms Row */
+      .terms-row {
+        display: flex;
+        align-items: flex-start;
+        margin: 20px 0;
+      }
+
+      .terms-row input[type="checkbox"] {
+        accent-color: #e50914;
+        margin-right: 12px;
+        margin-top: 2px;
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+      }
+
+      .terms-row label {
+        text-transform: none;
+        color: #999;
+        font-size: 14px;
+        cursor: pointer;
+        line-height: 1.4;
+      }
+
+      /* Signup Button */
+      .signup-btn {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(135deg, #e50914 0%, #b20710 100%);
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 16px;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s ease;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 15px rgba(229, 9, 20, 0.3);
+      }
+
+      .signup-btn:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.1);
+        box-shadow: 0 6px 20px rgba(229, 9, 20, 0.4);
+      }
+
+      .signup-btn:disabled {
+        background: #444;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      /* Footer Link */
+      .login-link {
+        text-align: center;
+        color: #ccc;
+        font-size: 15px;
+      }
+
+      .login-link a {
+        color: #e50914;
+        text-decoration: none;
+        font-weight: 700;
+        margin-left: 5px;
+        transition: color 0.3s;
+      }
+
+      .login-link a:hover {
+        color: #ff1f2d;
+        text-decoration: underline;
+      }
+
+      /* Error Message Style */
+      .error-msg {
+        color: #ff4d4d;
+        font-size: 12px;
+        margin-top: 5px;
+        display: none;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 600px) {
+        .signup-card {
+          padding: 30px 20px;
+        }
+        .bg-container {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .logo .s-char {
+          font-size: 32px;
+        }
+        .logo {
+          font-size: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Background Grid -->
+    <div class="bg-container" id="bgGrid"></div>
+
+    <!-- Overlay Layer -->
+    <div class="overlay"></div>
+
+    <!-- Main Content -->
+    <div class="main-wrapper">
+      <div class="signup-card">
+        <!-- Brand -->
+        <div class="logo"><span class="s-char">S</span> STACKLY</div>
+
+        <!-- Form -->
+        <form id="signupForm" action="./404.html">
+          <div class="form-group">
+            <label for="fullname">Full Name <span>*</span></label>
+            <input
+              type="text"
+              id="fullname"
+              placeholder="Enter your full name"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="username">Username <span>*</span></label>
+            <input
+              type="text"
+              id="username"
+              placeholder="Choose a username"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address <span>*</span></label>
+            <input
+              type="email"
+              id="email"
+              placeholder="example@streamit.com"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password <span>*</span></label>
+            <input
+              type="password"
+              id="password"
+              placeholder="Min. 8 characters"
+              required
+            />
+            <span
+              class="toggle-password"
+              onclick="togglePassword('password', 'eye-1')"
+            >
+              <svg
+                id="eye-1"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </span>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword">Confirm Password <span>*</span></label>
+            <input
+              type="password"
+              id="confirmPassword"
+              placeholder="Repeat your password"
+              required
+            />
+            <span
+              class="toggle-password"
+              onclick="togglePassword('confirmPassword', 'eye-2')"
+            >
+              <svg
+                id="eye-2"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </span>
+            <p id="matchError" class="error-msg">Passwords do not match!</p>
+          </div>
+
+          <div class="terms-row">
+            <input type="checkbox" id="terms" required />
+            <label for="terms"
+              >I agree to the Terms & Conditions and Privacy Policy.</label
+            >
+          </div>
+
+          <button type="submit" class="signup-btn" id="submitBtn">
+            Create Account
+            <span style="font-size: 18px; margin-left: 5px">✓</span>
+          </button>
+
+          <div class="login-link">
+            Already have an account? <a href="./login.html">Login</a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // Generate Background Grid Posters
+      const grid = document.getElementById("bgGrid");
+      const posterCount = 20;
+
+      const imageSearchTerms = [
+        "movie",
+        "cinema",
+        "action",
+        "horror",
+        "space",
+        "drama",
+      ];
+
+      for (let i = 0; i < posterCount; i++) {
+        const term = imageSearchTerms[i % imageSearchTerms.length];
+        const div = document.createElement("div");
+        div.className = "poster";
+        div.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url("https://images.unsplash.com/photo-1594908900066-3f47337549d8?auto=format&fit=crop&w=400&q=80&sig=${i}")`;
+        // Using a slightly different sig to get different variations
+        grid.appendChild(div);
+      }
+
+      // Toggle Password Visibility
+      function togglePassword(fieldId, iconId) {
+        const field = document.getElementById(fieldId);
+        const icon = document.getElementById(iconId);
+
+        if (field.type === "password") {
+          field.type = "text";
+          icon.style.color = "#e50914";
+        } else {
+          field.type = "password";
+          icon.style.color = "#777";
+        }
+      }
+
+      // Validation & Form Handling
+      const form = document.getElementById("signupForm");
+      const pass = document.getElementById("password");
+      const confPass = document.getElementById("confirmPassword");
+      const errorMsg = document.getElementById("matchError");
+      const submitBtn = document.getElementById("submitBtn");
+
+      function checkMatch() {
+        if (confPass.value !== "" && pass.value !== confPass.value) {
+          errorMsg.style.display = "block";
+          confPass.style.borderColor = "#ff4d4d";
+          return false;
+        } else {
+          errorMsg.style.display = "none";
+          confPass.style.borderColor = "#333";
+          if (confPass.value !== "") confPass.style.borderColor = "#28a745";
+          return true;
+        }
+      }
+
+      pass.addEventListener("input", checkMatch);
+      confPass.addEventListener("input", checkMatch);
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        if (!checkMatch()) return;
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = "Creating Account...";
+
+        setTimeout(() => {
+          submitBtn.innerHTML = "Account Created! ✓";
+          submitBtn.style.background = "#28a745";
+
+          // Simulate redirect
+          setTimeout(() => {
+            window.location.href = "./404.html";
+          }, 500);
+        }, 1500);
+      });
+    </script>
+  </body>
+</html>
